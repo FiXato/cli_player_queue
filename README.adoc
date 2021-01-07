@@ -1,0 +1,70 @@
+# CLI Player Queue
+Filip H.F. "FiXato" Slagter
+2021-01-07
+:lang: en-gb
+
+## What is CLI Player Queue?
+A set of scripts to retrieve the title of the media launched with the CLI tool, track it in a history file, browsing and filtering the player history using fzf (command-line fuzzy finder), and launching the player (usually mpv) with the results.
+
+## Why?
+Because I don't have enough pet projects already. ;)
+Nah, just to simplify finding and re-opening videos (mostly YouTube and Twitch) I've watched through MPV from the command-line.
+
+## Usage examples:
+
+### Get title for YouTube video:
+```
+./get_title_from_url.sh https://www.youtube.com/watch?v=FwVWDLxWx2U
+#=> FiXato -  FiXato's View - About FiXato's channel
+```
+
+### Track video to history file, and open it:
+`./play_video.sh https://www.youtube.com/watch?v=FwVWDLxWx2U`
+
+The history file `$PLAY_VIDEO_HISTORY_FILE` now contains:
+`https://www.youtube.com/watch?v=FwVWDLxWx2U # FiXato -  FiXato's View - About FiXato's channel`
+
+### Re-open video by title:
+`./play_video.sh "FiXato's View"`
+Should re-open https://www.youtube.com/watch?v=FwVWDLxWx2U if it was found in the history file. If it was not found, it thinks the title is actually the URL though, and MPV will fail...
+
+### Browse the history file and play the selected media file:
+`./play_video.sh`
+This will open `fzf` with the history file, which will allow you to browse through the entire list, line by line:
+```
+> https://www.youtube.com/watch?v=FwVWDLxWx2U # FiXato -  FiXato's View - About FiXato's channel
+https://www.youtube.com/watch?v=6Rf2GhxQZwQ # SNES drunk -  Is Lock On Worth Playing Today? - SNESdrunk
+https://www.youtube.com/watch?v=nUVWINHXluA # Kikoskia -  Let’s Play Moomin’s Tale #02: Where There’s Adventure…
+https://www.youtube.com/watch?v=Xs3zeQiXS38 # Kikoskia -  Let’s Play BG2 EE ToB #03: The First Challenge
+https://www.youtube.com/watch?v=sMupFLS3MHI # Kikoskia -  Terraria VOD #9 (04/01/21): The Ore Hunt Begins Anew
+>
+```
+
+and optionally filter as you type:
+```
+> https://www.youtube.com/watch?v=FwVWDLxWx2U # FiXato -  FiXato's View - About FiXato's channel
+  1/5
+> fix
+```
+
+## Future plans:
+
+* A script to populate a `$MEDIA_SUBSCRIPTIONS_FILE` with media URLs and titles from your YouTube subscriptions and perhaps recent videos from Twitch streamers you follow, as well as a toggle for the `play_video.sh` script to browse these instead of the `$PLAY_VIDEO_HISTORY_FILE`
+
+## Dependencies:
+
+* https://github.com/junegunn/fzf[fzf] FuzZy Finder, a command-line tool for presenting a list of options, and returning the selected item as a string
+* recode: an optional CLI tool the script *can* use for translating HTML entities to UTF-8. If not found, it won't try to decode the HTML entities.
+
+
+## Changelog:
+
+* Version 1, 2021-01-07:
+** Initial release:
+*** Script (`get_title_from_url.sh`) to retrieve the title of a YouTube video, as well as from a HTML page (if it has a <title> element).
+*** Script (`play_video.sh`) to play the given media URL with $PLAYER (default: mpv), track it in $PLAY_VIDEO_HISTORY_FILE (default: ~/.config/play_video_history.log), and re-open media from the history file.
+
+
+## License:
+
+This project itself is licensed under the link:LICENSE[MIT License].
