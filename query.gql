@@ -1,0 +1,40 @@
+query {
+  user(login: "$username") {
+    id
+    login
+    displayName
+    description
+    createdAt
+    roles {
+      isPartner
+    }
+    videos {
+      edges {
+        node {
+          id
+          creator {
+            login
+          }
+          title
+          viewCount
+          createdAt
+          lengthSeconds
+          broadcastType
+          game {
+            name
+          }
+        }
+      }
+    }
+    stream {
+      id
+      title
+      type
+      viewersCount
+      createdAt
+      game {
+        name
+      }
+    }
+  }
+}
