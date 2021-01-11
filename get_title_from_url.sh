@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # (C) 2021, Filip H.F. "FiXato" Slagter, contact.fixato.org
 set -o nounset -o pipefail
-INVIDIOUS_INSTANCE_URL=${INVIDIOUS_INSTANCE_URL:-https://yewtu.be}
 url="${1:-""}"
 [[ "$url" == "" ]] && echo "Please specify the media URL as first parameter" && exit 1
 

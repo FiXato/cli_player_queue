@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # (C) 2021, Filip H.F. "FiXato" Slagter, contact.fixato.org
 set -o nounset -o pipefail
-PLAYER="${PLAYER:-mpv}"
-PLAY_VIDEO_HISTORY_FILE=${PLAY_VIDEO_HISTORY_FILE:-~/.config/play_video_history.log}
 query=${1:-""}
 
 . "$(dirname "$(readlink -f "$0")")/functions.sh"
