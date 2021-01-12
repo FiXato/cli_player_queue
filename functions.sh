@@ -182,9 +182,9 @@ function store_recent_youtube_feeds_for_user {
 function store_youtube_video_titles {
 	output_title_file="${2//.txt*/.by_title.txt}"
 	output_date_file="${2//.txt*/.by_date.txt}"
-	jq -r -L ./ 'include "functions"; sort_youtube_rss_by_title | title_format' "$1" > "$output_title_file" && \
+	jq -r -L "$(path_to_script)/" 'include "functions"; sort_youtube_rss_by_title | title_format' "$1" > "$output_title_file" && \
 		echo "Exported video titles from '$1' to '$output_title_file'" >&2 && \
-		jq -r -L ./ 'include "functions"; sort_youtube_rss_by_published | title_format' "$1" > "$output_date_file" && \
+		jq -r -L "$(path_to_script)/" 'include "functions"; sort_youtube_rss_by_published | title_format' "$1" > "$output_date_file" && \
 		echo "Exported video titles from '$1' to '$output_date_file'" >&2
 }
 
