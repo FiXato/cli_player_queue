@@ -5,16 +5,18 @@ query=${1:-""}
 
 . "$(dirname "$(readlink -f "$0")")/functions.sh"
 
-selected="$(cat "$PLAY_VIDEO_HISTORY_FILE" | fzf --exact -q "$query" -0 -1)"
+selected="$(cat "${PLAY_VIDEO_SOURCE:-"$PLAY_VIDEO_HISTORY_FILE"}" | fzf --exact -q "$query" -0 -1)"
 error_code=$?
 if (($error_code == 0)); then
-	source="${selected%%#*}"
+	source="${selected%%#*}" # Strip everything after and including the comment
+	source="${source%% *}" # Trim trailing whitespace
 	echo "Launching $PLAYER for: $selected"
+	[ "${PLAY_VIDEO_SOURCE:-""}" != "" ] && video_title="$(capture_video_title "$source" || exit $?)" && echo "$source # $video_title" >> "$PLAY_VIDEO_HISTORY_FILE"
 	$PLAYER $source
 elif (($error_code == 130)); then # FZF was aborted with ctrl-c
 	exit
 elif (($error_code == 1)); then # FZF had no match
-	capture_video_title "$query" || exit $?
+	video_title="$(capture_video_title "$query" || exit $?)"
 	echo "$query # $video_title" >> $PLAY_VIDEO_HISTORY_FILE
 	echo "Launching $PLAYER for: $query ($video_title)"
 	$PLAYER "$query" # $video_title

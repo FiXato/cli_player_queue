@@ -25,14 +25,19 @@ case "$cmd" in
 		find "$PLAY_VIDEO_YOUTUBE_DIR" -type f -name '*.txt' | sort -u #| grep -oP "$PLAY_VIDEO_YOUTUBE_DIR"'/\K(.+)' | sort -u
 		;;
 
-	"")
-		#FZF_DEFAULT_COMMAND="\"$(script_real_path)\" list" videos_file="$("$0" "list" | fzf --preview "cat {}" --preview-window=down --with-nth=-2,-1 --delimiter=/ --bind "ctrl-u:reload(tmux display-message updating && \"$(script_real_path)\" update_feed_from_fzf {} && $FZF_DEFAULT_COMMAND)" --no-sort --tac --query "'videos 'by_title.txt !^si")"
+	"grep")
+		INITIAL_QUERY=""
+		RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
+		RG_PATH="${PLAY_VIDEO_YOUTUBE_DIR}/*/videos.by_date.txt"
+		result="$(FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY' $RG_PATH" fzf --bind "change:reload:$RG_PREFIX {q} $RG_PATH || true" --ansi --phony --query "$INITIAL_QUERY" --height=50% --layout=reverse --with-nth=2 --delimiter="$PLAY_VIDEO_YOUTUBE_DIR")" && pv "$(echo "$result" | grep -oP 'https://\S+')"
+		;;
 
-		videos_file="$(LAUNCHER="$0" FZF_DEFAULT_COMMAND="$0"' list' fzf --preview "cat {}" --preview-window=down --with-nth=-2,-1 --delimiter=/ --bind 'ctrl-u:reload(tmux display-message updating && "$LAUNCHER" update_feed_from_fzf {} && $FZF_DEFAULT_COMMAND),ctrl-n:execute(read -p "Username? " username && read -p "Channel ID? " channel_id && "$LAUNCHER" update_feed "$username" "$channel_id")+reload($FZF_DEFAULT_COMMAND),ctrl-r:reload($FZF_DEFAULT_COMMAND)' --no-sort --tac --query "'videos '.by_title !^si")"
+	"menu" | "")
+		videos_file="$(LAUNCHER="$0" FZF_DEFAULT_COMMAND="$0"' list' fzf --preview "cat {}" --preview-window="down:wrap" --with-nth=-2,-1 --delimiter=/ --bind 'ctrl-u:reload(tmux display-message updating && "$LAUNCHER" update_feed_from_fzf {} && $FZF_DEFAULT_COMMAND),ctrl-n:execute(read -p "Username? " username && read -p "Channel ID? " channel_id && "$LAUNCHER" update_feed "$username" "$channel_id")+reload($FZF_DEFAULT_COMMAND),ctrl-r:reload($FZF_DEFAULT_COMMAND)' --no-sort --tac --border --color 'fg:#dddddd,bg:#020502,fg+:#000000,bg+:#55aa55,hl+:#006600,preview-fg:#aaeeaa,preview-bg:#050505,border:#aaffaa,header:#99ff99' --header='ctrl+n: add new feed / ctrl+u: update selected feed / ctrl+r: reload results / ESC: exit' --query "'videos '.by_title !^si")"
 
 		error_code=$?
 		(( $error_code > 0 )) && error_msg $error_code "Error while selecting file" && exit $error_code
-		PLAY_VIDEO_HISTORY_FILE="${videos_file}" play_video && "$0"
+		PLAY_VIDEO_SOURCE="${videos_file}" play_video && "$0"
 		;;
 
 	*)

@@ -57,6 +57,7 @@ and optionally filter as you type:
 * https://github.com/KEINOS/gofeed-cli#Download[GoFeed-CLI], a command-line client to retrieve RSS feeds and transform them into a JSON object.
 * https://github.com/ericchiang/pup/[pup], a command-line HTML parser using CSS-paths.
 * `grep`, preferably GNU's grep, rather than BSD's grep.
+* `ripgrep` aka `rg` for the `youtube.sh grep` command.
 * recode: an optional CLI tool the script *can* use for translating HTML entities to UTF-8. If not found, it won't try to decode the HTML entities.
 
 

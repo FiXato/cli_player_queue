@@ -31,7 +31,7 @@ else
 	video_id="$(echo $url | grep -oP 'v=\K([^&? ]+)')"
 	error_code=$?
 	if (( $error_code == 0 )); then
-		html_source="$(curl -H "Content-Type: text/html; charset=utf-8" --silent "${INVIDIOUS_INSTANCE_URL}/watch?v=${video_id}")" # proxy through an Invidious instance to avoid Google's bot detection, captchas and tracking
+		html_source="$(curl -A "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/81.0" -H "Content-Type: text/html; charset=utf-8" --silent "${INVIDIOUS_INSTANCE_URL}/watch?v=${video_id}")" # proxy through an Invidious instance to avoid Google's bot detection, captchas and tracking
 		#TODO: add error checking
 		video_title="$(echo "$html_source" | grep -oP '<title>\K([^<]+)' | sed 's/ - Invidious$//')"
 		channel_name="$(echo "$html_source" | grep -oP '<span id="channel-name">\K[^<]+')"
