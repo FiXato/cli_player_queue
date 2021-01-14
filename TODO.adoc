@@ -1,0 +1,23 @@
+# ToDo list for CLI Player Queue
+Filip H.F. "FiXato" Slagter
+2021-01-13
+:lang: en-gb
+
+## What would I still like to add to this toolset?
+
+- Support for playlist IDs
+- built-in support and instructions for importing your https://takeout.google.com/takeout/custom/youtube[YouTube Google Data Takeout archives], so you can browse and filter your subscriptions, playlists, likes, comments and watch history.
+- export functions
+- Optional YouTube V3 API support
+	- Could use this to retrieve metadata such as channel name and video title for video IDs
+	- sync subscriptions / playlists
+	- "Like" and/or "Favourite" after watching a video
+- Add channel by video ID
+- Easy way to update all your feeds, or just the most used ones.
+- Indicator for feeds with new entries
+- store twitch feeds
+
+## What would I like to change?
+
+- Have a single consolidated menu that uses `execute-silently` rather than launch another fzf menu with the output from the first menu.
+- Have the menu display just the channel/feed names, and use key binds to switch between date/title/etc sort orders.

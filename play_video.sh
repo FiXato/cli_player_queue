@@ -5,7 +5,12 @@ query=${1:-""}
 
 . "$(dirname "$(readlink -f "$0")")/functions.sh"
 
-selected="$(cat "${PLAY_VIDEO_SOURCE:-"$PLAY_VIDEO_HISTORY_FILE"}" | fzf --exact -q "$query" -0 -1)"
+ACTION_BINDS="change:top"
+if [[ "${ENABLE_ENTER_ACTIONS:-""}" == "yes" ]]; then
+	ACTION="execute-silent($PLAYER {} > ~/test.log)"
+	ACTION_BINDS="enter:$ACTION,double-click:$ACTION"
+fi
+selected="$(cat "${PLAY_VIDEO_SOURCE:-"$PLAY_VIDEO_HISTORY_FILE"}" | fzf --bind "$ACTION_BINDS" --no-sort --exact -q "$query" -0 -1)"
 error_code=$?
 if (($error_code == 0)); then
 	source="${selected%%#*}" # Strip everything after and including the comment

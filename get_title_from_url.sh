@@ -18,7 +18,7 @@ if [[ "$url" == https://twitch.tv* ]] || [[ "$url" == https://www.twitch.tv* ]];
 		channel="$(echo $url | grep -oP '/\K[^/]+$')"
 		error_code=$?
 		if (( $error_code == 0 )); then
-			json="$(curl_twitch --request POST --data "$(echo '{}' | jq --rawfile query query.gql '{"query": $query}' | sed 's/$username/'$channel'/')" https://gql.twitch.tv/gql | jq '.')"
+			json="$(curl_twitch --request POST --data "$(echo '{}' | jq --rawfile query "$(path_to_script)/query.gql" '{"query": $query}' | sed 's/$username/'$channel'/')" https://gql.twitch.tv/gql | jq '.')"
 			stream_title="$(echo "$json" | jq -r '.data.user as $user | if $user.stream != null then ($user.stream | "[\(.type)] \($user.displayName) - \(.title) [\(.game.name)]") else "" end')"
 			[[ "$stream_title" == "" ]] && echo "$(debug_prefix)[3] Stream for $channel is offline" >&2 && exit 3 #Not Live
 			echo "$stream_title"
@@ -29,13 +29,19 @@ if [[ "$url" == https://twitch.tv* ]] || [[ "$url" == https://www.twitch.tv* ]];
 	fi
 else
 	video_id="$(echo $url | grep -oP 'v=\K([^&? ]+)')"
+	url_prefix="${VIDEO_URL_PREFIX:-"${INVIDIOUS_INSTANCE_URL}/watch?v="}"
+	video_url="${url_prefix}${video_id}"
 	error_code=$?
+	printf 'Video ID: %s / URL: %s' "$video_id" "$video_url" >&2
 	if (( $error_code == 0 )); then
-		html_source="$(curl -A "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/81.0" -H "Content-Type: text/html; charset=utf-8" --silent "${INVIDIOUS_INSTANCE_URL}/watch?v=${video_id}")" # proxy through an Invidious instance to avoid Google's bot detection, captchas and tracking
+		html_source="$(curl --location -A "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/81.0" -H "Content-Type: text/html; charset=utf-8" --silent "$video_url")" # proxy through an Invidious instance to avoid Google's bot detection, captchas and tracking
+		error_code=$?
+		(( $error_code > 0 )) && printf 'Error code: %s' "$error_code" >&2
 		#TODO: add error checking
 		video_title="$(echo "$html_source" | grep -oP '<title>\K([^<]+)' | sed 's/ - Invidious$//')"
 		channel_name="$(echo "$html_source" | grep -oP '<span id="channel-name">\K[^<]+')"
 		output_title="$channel_name -  $video_title"
+		printf 'Title: %s\n' "$output_title" >&2
 		#output_title="$(html2utf8 "$output_title")"
 	else
 		html="$(curl --location --silent "$1")"

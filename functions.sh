@@ -217,7 +217,10 @@ function merge_json_files {
 function merge_youtube_feed_files {
 	jq -s '.[0].items += .[1].items | .[0] | .items |= unique_by(.link)' "$1" "$2"
 }
-#sort_by_title
-#jq -s '.[0] * .[1]' kikoskia.rss.*.json  | jq -r '.items|sort_by(.title)[] | "\(.link) # 📅\(.publishedParsed) - \(.author.name) - \(.title)"'
-# MPV_SELECTION="$(cat kikoskia.rss.merged.20210109.json | jq -r '.items|sort_by(.title)[] | "\(.link) # 📅\(.publishedParsed) - \(.author.name) - \(.title)"' | fzf --no-sort --tac)" && pv ${MPV_SELECTION%% *}
-#cat "$(grep -l ${MPV_SELECTION%% *} /mnt/c/Users/FiXato/scoop/apps/mpv-git/current/portable_config/watch_later/*)"
+
+function youtube_feed_names {
+	find "${PLAY_VIDEO_YOUTUBE_DIR}" $find_args -type d | grep -oP "${PLAY_VIDEO_YOUTUBE_DIR}"'/?\K([^/]+)'
+}
+#cat "$(grep -l ${MPV_SELECTION%% *} scoop/apps/mpv-git/current/portable_config/watch_later/*)"
+#jq -r -s '.[] | . as $entry | $entry | if (.subtitles == null) then empty else .subtitles end | map(.name) | join(",") as $subs | $entry | "\(.titleUrl) # \(.title) [💻\($subs)] [\(.time)]"' Takeout/YouTube\ and\ YouTube\ Music/history/watch-history.json #> ~/.config/play_video/takeout_watch_history.txt
+#jq -r -s '.[] | . as $entry | $entry | if (.subtitles == null) then empty else .subtitles end | map(.name) | join(",") as $subs | $entry | "\(.titleUrl) # \(.title) [💻\($subs)] [\(.time)]"' Takeout/YouTube\ and\ YouTube\ Music/history/watch-history.json #> ~/.config/play_video/takeout_watch_history.txt
